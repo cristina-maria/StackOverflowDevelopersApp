@@ -20,7 +20,7 @@ public class JSONUtilities {
     public static String nameTag = "display_name";
     public static String locationTag = "location";
     public static String profileImageTag = "profile_image";
-    public static String badgesTag = "badge_count";
+    public static String badgesTag = "badge_counts";
     public static String bronzeBadgeTag = "bronze";
     public static String silverBadgeTag = "silver";
     public static String goldBadgeTag = "gold";

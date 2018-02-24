@@ -24,6 +24,16 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.AdapterViewH
     private ArrayList<String> usersName;
     private ArrayList<String> usersProfilePicture;
 
+    private final UsersAdapterOnClickHandler onClickHandler;
+
+    public interface UsersAdapterOnClickHandler {
+        void onClick();
+    }
+
+    public UsersAdapter(UsersAdapterOnClickHandler onClickHandler) {
+
+        this.onClickHandler = onClickHandler;
+    }
     /*
         Used when a new View is created - inflate the layout
      */
@@ -64,7 +74,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.AdapterViewH
         return usersName.size();
     }
 
-    public class AdapterViewHolder extends RecyclerView.ViewHolder {
+    public class AdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public final TextView mUserNameTextView;
         public final ImageView mProfileImageTextView;
@@ -73,8 +83,13 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.AdapterViewH
                 super(view);
                 mUserNameTextView = (TextView) view.findViewById(R.id.nameTextView);
                 mProfileImageTextView = (ImageView) view.findViewById(R.id.profileImageView);
+                view.setOnClickListener(this);
             }
 
+        @Override
+        public void onClick(View v) {
+            onClickHandler.onClick();
+        }
     }
 
     /*
