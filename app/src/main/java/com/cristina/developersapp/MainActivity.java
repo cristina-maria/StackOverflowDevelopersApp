@@ -17,6 +17,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -49,6 +50,8 @@ public class MainActivity extends AppCompatActivity implements
     private RecyclerView mRecyclerView;
     private UsersAdapter mUsersAdapter;
 
+    private TextView mErrorDisplay;
+
     private HashMap<String, ArrayList<String>> dataHashMap;
 
     public static String filename = "JSONData";
@@ -63,6 +66,8 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mErrorDisplay = (TextView) findViewById(R.id.error_message);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview);
 
@@ -202,6 +207,9 @@ public class MainActivity extends AppCompatActivity implements
                     return dataHashMap;
 
                 } catch (Exception e) {
+                    mRecyclerView.setVisibility(View.INVISIBLE);
+                    mErrorDisplay.setVisibility(View.VISIBLE);
+                    mErrorDisplay.setText("No connection to internet.\n Please retry.");
                     e.printStackTrace();
                     return null;
                 }
