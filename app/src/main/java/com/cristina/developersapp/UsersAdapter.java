@@ -3,6 +3,7 @@ package com.cristina.developersapp;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
@@ -13,6 +14,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 /**
@@ -26,13 +32,16 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.AdapterViewH
 
     private final UsersAdapterOnClickHandler onClickHandler;
 
+    private Context context;
+
     public interface UsersAdapterOnClickHandler {
-        void onClick();
+        void onClick(int position);
     }
 
-    public UsersAdapter(UsersAdapterOnClickHandler onClickHandler) {
+    public UsersAdapter(UsersAdapterOnClickHandler onClickHandler, Context context) {
 
         this.onClickHandler = onClickHandler;
+        this.context = context;
     }
     /*
         Used when a new View is created - inflate the layout
@@ -57,13 +66,11 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.AdapterViewH
 
         String userName = usersName.get(position);
         String pictureString = usersProfilePicture.get(position);
-        Log.i("TAG", pictureString);
-
         holder.mUserNameTextView.setText(userName);
 
-       /* byte[] imageBytes = Base64.decode(pictureString, Base64.DEFAULT);
-        Bitmap decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-        holder.mProfileImageTextView.setImageBitmap(decodedImage);*/
+        byte [] encodeByte = Base64.decode(pictureString,Base64.DEFAULT);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+        holder.mProfileImageTextView.setImageBitmap(bitmap);
 
     }
 
@@ -76,8 +83,8 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.AdapterViewH
 
     public class AdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        public final TextView mUserNameTextView;
-        public final ImageView mProfileImageTextView;
+        public TextView mUserNameTextView;
+        public ImageView mProfileImageTextView;
 
             public AdapterViewHolder(View view) {
                 super(view);
@@ -88,7 +95,8 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.AdapterViewH
 
         @Override
         public void onClick(View v) {
-            onClickHandler.onClick();
+            int position = getAdapterPosition();
+            onClickHandler.onClick(position);
         }
     }
 

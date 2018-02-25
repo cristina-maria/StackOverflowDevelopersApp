@@ -28,6 +28,6 @@
         app:layout_constraintLeft_toRightOf="@+id/nameTextView"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:background="@color/colorPrimary"/>
+        />
 
 </android.support.constraint.ConstraintLayout>

@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">DevelopersApp</string>
+
+    <string name="user_name">UserName</string>
+    <string name="user_location">UserLocation</string>
+    <string name="user_picture">UserProfilePicture</string>
+    <string name="badges">Badges</string>
+    <string name="bronze_badges">Bronze Badges</string>
+    <string name="silver_badges">Silver Badges</string>
+    <string name="gold_badges">Gold Badges</string>
+
+    <string name="file_name">JSONData</string>
 </resources>
