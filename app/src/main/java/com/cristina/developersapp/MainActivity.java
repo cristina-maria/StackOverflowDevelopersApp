@@ -36,6 +36,12 @@ import java.util.HashMap;
 import static android.R.attr.bitmap;
 import static com.cristina.developersapp.NetworkUtilities.getResponseFromHttpUrl;
 
+/*
+    In this application, the data retrieved in JSON format from the API is formatted into
+        a hashMap which maps from keys (userName, location, bdges... constants in JSONUtilities class)
+        to arraylists of strings containing the required info about the users
+ */
+
 public class MainActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<HashMap<String, ArrayList<String>>>,
         UsersAdapter.UsersAdapterOnClickHandler{
@@ -43,8 +49,7 @@ public class MainActivity extends AppCompatActivity implements
     private RecyclerView mRecyclerView;
     private UsersAdapter mUsersAdapter;
 
-    private static HashMap<String, ArrayList<String>> dataHashMap;
-    public static ArrayList<Bitmap> pictures = new ArrayList<>();
+    private HashMap<String, ArrayList<String>> dataHashMap;
 
     public static String filename = "JSONData";
 
@@ -54,14 +59,12 @@ public class MainActivity extends AppCompatActivity implements
 
     private static long cachetime = 1800000;
 
-    private static long len;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview);
+        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview);
 
         LinearLayoutManager layoutManager
                 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -83,40 +86,44 @@ public class MainActivity extends AppCompatActivity implements
 
         if (file.exists() && lastModified > time - cachetime ) {
 
-            String data = "";
-
             Log.i("Data", "retrieved from internal storage");
 
+            String data = null;
             try {
-                InputStream inputStream = this.openFileInput(filename);
 
-                if ( inputStream != null ) {
-                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-                    BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                    String receiveString = "";
-                    StringBuilder stringBuilder = new StringBuilder();
+                /*
+                    read from internal storage the data kept in JSON format
+                 */
+                data = NetworkUtilities.readFromInternalStorage(this, filename);
 
-                    while ( (receiveString = bufferedReader.readLine()) != null ) {
-                        stringBuilder.append(receiveString);
-                    }
-
-                    inputStream.close();
-                    inputStreamReader.close();
-                    bufferedReader.close();
-                    data = stringBuilder.toString();
-
-                }
-            }
-            catch (FileNotFoundException e) {
-                Log.e("login activity", "File not found: " + e.toString());
             } catch (IOException e) {
-                Log.e("login activity", "Can not read file: " + e.toString());
+                e.printStackTrace();
             }
 
+            /*
+                transform the JSON format into a hashMap
+             */
             dataHashMap = JSONUtilities.
                     getUsersStringJson(this, data);
 
             mUsersAdapter.setUsersName(dataHashMap.get(JSONUtilities.nameTag));
+
+            ArrayList<String> profilePictures = dataHashMap.get(JSONUtilities.profileImageTag);
+            for (int i = 0; i < dataHashMap.get(JSONUtilities.nameTag).size(); i++) {
+
+                try {
+                    /*
+                        retrieve the Base64 encoded strings from the internal storage
+                        for the profile picturea
+                     */
+                    data = NetworkUtilities.readFromInternalStorage(this,
+                            "profile_picture" + String.valueOf(i));
+                    profilePictures.set(i, data);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
             mUsersAdapter.setUsersProfilePicture(dataHashMap.get(JSONUtilities.profileImageTag));
 
         } else {
@@ -129,7 +136,6 @@ public class MainActivity extends AppCompatActivity implements
 
             getSupportLoaderManager().initLoader(loaderId, bundleForLoader, callback);
         }
-
 
     }
 
@@ -159,34 +165,36 @@ public class MainActivity extends AppCompatActivity implements
                     String jsonDataResponse = NetworkUtilities
                             .getResponseFromHttpUrl(requestUrl);
 
-                    FileOutputStream outputStream;;
-
-                    try {
-
-                        file.delete();
-                        outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
-                        outputStream.write(jsonDataResponse.getBytes());
-                        outputStream.close();
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    NetworkUtilities.writeToInternalStorage(
+                            getApplicationContext(), jsonDataResponse, filename);
 
                     dataHashMap = JSONUtilities.getUsersStringJson(
                             getApplicationContext(), jsonDataResponse);
 
                     ArrayList<String> profileImagesUrlStr = dataHashMap.get(JSONUtilities.profileImageTag);
+                    ByteArrayOutputStream stream;
 
                     for (int i = 0; i < profileImagesUrlStr.size(); i++) {
 
+                        /*
+                            obtain the profile picture in Bitmap format from the link provided
+                            by the API
+                         */
                         URL url = new URL(profileImagesUrlStr.get(i));
                         Bitmap image = NetworkUtilities.getBitmapFromURL(url);
 
-                        ByteArrayOutputStream stream = new  ByteArrayOutputStream();
-                        image.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                        /*
+                            compress the Bitmap object into a Base64 string in order to be
+                            written in the internal storage
+                         */
+                        stream = new  ByteArrayOutputStream();
+                        image.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                         byte [] bytes = stream.toByteArray();
-                        String result= Base64.encodeToString(bytes, Base64.DEFAULT);
+                        String result = Base64.encodeToString(bytes, Base64.DEFAULT);
                         stream.close();
+
+                        NetworkUtilities.writeToInternalStorage(
+                                getApplicationContext(), result, "profile_picture" + String.valueOf(i));
 
                         profileImagesUrlStr.set(i, result);
                     }
@@ -231,6 +239,10 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
+    /*
+        called when the user presses one of the elements in the list
+        all the details about the user are passed to the activity
+     */
     @Override
     public void onClick(int position) {
         Context context = this;

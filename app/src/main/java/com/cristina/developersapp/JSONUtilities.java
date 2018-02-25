@@ -28,7 +28,7 @@ public class JSONUtilities {
     /*
         Parse the data obtained in JSON format. Return the info about names, location,
         profile pictures and badges in a HashMap mapping from keys to arraylists of
-        the data obtained for each user.
+        data obtained for each user.
      */
     public static HashMap<String, ArrayList<String>> getUsersStringJson(Context context, String usersJsonStr) {
 

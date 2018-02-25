@@ -43,6 +43,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.AdapterViewH
         this.onClickHandler = onClickHandler;
         this.context = context;
     }
+
     /*
         Used when a new View is created - inflate the layout
      */
@@ -68,7 +69,8 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.AdapterViewH
         String pictureString = usersProfilePicture.get(position);
         holder.mUserNameTextView.setText(userName);
 
-        byte [] encodeByte = Base64.decode(pictureString,Base64.DEFAULT);
+        /* decode the Base64 string to obtain a Bitmap */
+        byte [] encodeByte = Base64.decode(pictureString, Base64.DEFAULT);
         Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
         holder.mProfileImageTextView.setImageBitmap(bitmap);
 
@@ -81,6 +83,9 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.AdapterViewH
         return usersName.size();
     }
 
+    /*
+        Class used for the elements of RecyclerView
+     */
     public class AdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public TextView mUserNameTextView;

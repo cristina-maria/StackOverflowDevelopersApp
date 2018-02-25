@@ -8,51 +8,64 @@
     tools:layout_editor_absoluteY="81dp"
     tools:layout_editor_absoluteX="0dp">
 
-    <TextView
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/userName"
-        android:layout_marginRight="145dp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="50dp" />
-
     <ImageView
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:id="@+id/imageView"
-        android:layout_marginLeft="8dp"
+        app:layout_goneMarginTop="15dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="50dp"
-        app:layout_constraintRight_toLeftOf="@+id/userName"
-        android:layout_marginRight="8dp"
-        app:layout_constraintHorizontal_bias="0.252"
-        />
+        android:layout_marginTop="46dp" />
+
+    <TextView
+        android:layout_width="81dp"
+        android:layout_height="22dp"
+        android:id="@+id/userName"
+        app:layout_goneMarginRight="15dp"
+        android:textSize="20dp"
+        android:layout_marginRight="119dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="46dp"
+        app:layout_constraintLeft_toRightOf="@+id/imageView"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintHorizontal_bias="1.0"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="119dp" />
+
+
 
     <TextView
         android:id="@+id/userLocation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:layout_goneMarginRight="15dp"
         android:text="TextView"
-        app:layout_constraintLeft_toRightOf="@+id/imageView"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="27dp"
-        app:layout_constraintTop_toBottomOf="@+id/userName"
+        android:textSize="20dp"
         android:layout_marginRight="8dp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintHorizontal_bias="0.392" />
+        app:layout_constraintRight_toRightOf="@+id/userName"
+        app:layout_constraintLeft_toLeftOf="@+id/userName"
+        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_marginBottom="86dp"
+        app:layout_constraintBottom_toTopOf="@+id/badges"
+        android:layout_marginEnd="8dp" />
 
     <TextView
         android:id="@+id/badges"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="24dp"
         android:text="@string/badges"
+        android:textSize="20dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginRight="8dp"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="71dp"
+        app:layout_constraintHorizontal_bias="0.501"
+        android:layout_marginTop="32dp"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
     <TextView
@@ -60,66 +73,80 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/gold_badges"
-        android:layout_marginTop="0dp"
-        app:layout_constraintTop_toBottomOf="@+id/badges"
-        android:layout_marginLeft="28dp"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        android:textSize="20dp"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/silverBadges"
+        android:layout_marginTop="40dp"
+        app:layout_constraintTop_toBottomOf="@+id/badges" />
 
     <TextView
         android:id="@+id/silverBadges"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/silver_badges"
-        app:layout_constraintLeft_toRightOf="@+id/goldBadges"
-        android:layout_marginLeft="43dp"
-        android:layout_marginTop="-1dp"
-        app:layout_constraintTop_toBottomOf="@+id/badges" />
+        android:textSize="20dp"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintRight_toLeftOf="@+id/bronzeBadges"
+        android:layout_marginTop="40dp"
+        app:layout_constraintTop_toBottomOf="@+id/badges"
+        app:layout_constraintLeft_toRightOf="@+id/goldBadges" />
 
     <TextView
         android:id="@+id/bronzeBadges"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/bronze_badges"
-        app:layout_constraintLeft_toRightOf="@+id/silverBadges"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
+        android:textSize="20dp"
+        app:layout_constraintVertical_chainStyle="packed"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="0dp"
+        android:layout_marginTop="40dp"
         app:layout_constraintTop_toBottomOf="@+id/badges"
-        app:layout_constraintHorizontal_bias="0.483" />
+        app:layout_constraintLeft_toRightOf="@+id/silverBadges" />
 
     <TextView
         android:id="@+id/goldBadgesNumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="TextView"
-        android:layout_marginLeft="39dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginTop="-8dp"
-        app:layout_constraintTop_toBottomOf="@+id/goldBadges" />
+        android:textSize="20dp"
+        android:layout_marginLeft="-8dp"
+        app:layout_constraintLeft_toLeftOf="@+id/goldBadges"
+        android:layout_marginRight="0dp"
+        app:layout_constraintRight_toRightOf="@+id/goldBadges"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.515"
+        android:layout_marginBottom="205dp" />
 
     <TextView
         android:id="@+id/silverBadgesNumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="TextView"
-        app:layout_constraintLeft_toRightOf="@+id/goldBadgesNumber"
-        android:layout_marginLeft="66dp"
-        android:layout_marginTop="-8dp"
-        app:layout_constraintTop_toBottomOf="@+id/silverBadges" />
+        android:textSize="20dp"
+
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="@+id/silverBadges"
+        android:layout_marginRight="0dp"
+        app:layout_constraintRight_toRightOf="@+id/silverBadges"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.536"
+        android:layout_marginBottom="205dp" />
 
     <TextView
         android:id="@+id/bronzeBadgesNumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="TextView"
-        app:layout_constraintLeft_toRightOf="@+id/silverBadgesNumber"
+        android:textSize="20dp"
+
         android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="-8dp"
-        app:layout_constraintTop_toBottomOf="@+id/bronzeBadges"
-        app:layout_constraintHorizontal_bias="0.483" />
+        app:layout_constraintLeft_toLeftOf="@+id/bronzeBadges"
+        android:layout_marginRight="0dp"
+        app:layout_constraintRight_toRightOf="@+id/bronzeBadges"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="205dp"
+        app:layout_constraintHorizontal_bias="0.678" />
 
 
 </android.support.constraint.ConstraintLayout>

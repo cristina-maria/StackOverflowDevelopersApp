@@ -10,8 +10,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -22,7 +27,10 @@ import java.util.Scanner;
 
 /**
  * Created by Cristina on 2/23/2018.
+ * Helper class to retrieve data from internet and from the
+ * internal storage
  */
+
 
 public class NetworkUtilities {
 
@@ -63,7 +71,7 @@ public class NetworkUtilities {
     }
 
     /*
-        Fetch the data
+        Fetch the data from the given url
      */
     public static String getResponseFromHttpUrl(URL url) throws IOException {
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
@@ -86,13 +94,14 @@ public class NetworkUtilities {
         }
     }
 
+    /*
+        Fetch the data from the given URL and trasform it into Bitmap
+     */
     public static Bitmap getBitmapFromURL(URL url) throws IOException {
 
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();;
         try {
 
-            connection.setDoInput(true);
-            connection.connect();
             InputStream input = connection.getInputStream();
             Bitmap myBitmap = BitmapFactory.decodeStream(input);
 
@@ -100,6 +109,54 @@ public class NetworkUtilities {
             return myBitmap;
         } finally {
             connection.disconnect();
+        }
+    }
+
+    /*
+        Read from the internal storage using the filename given
+     */
+    public static String readFromInternalStorage(Context context, String filename) throws IOException {
+
+        InputStream inputStream = context.openFileInput(filename);
+
+        if ( inputStream != null ) {
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String receiveString = "";
+            StringBuilder stringBuilder = new StringBuilder();
+
+            while ( (receiveString = bufferedReader.readLine()) != null ) {
+                stringBuilder.append(receiveString);
+            }
+
+            inputStream.close();
+            inputStreamReader.close();
+            bufferedReader.close();
+
+            return stringBuilder.toString();
+
+        } else {
+            return null;
+        }
+    }
+
+    /*
+        Write to the internal storage using the filename given
+     */
+    public static void writeToInternalStorage(Context context, String data, String filename) {
+
+        File file = new File(filename);
+        FileOutputStream outputStream;;
+
+        try {
+
+            file.delete();
+            outputStream = context.openFileOutput(filename, Context.MODE_PRIVATE);
+            outputStream.write(data.getBytes());
+            outputStream.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

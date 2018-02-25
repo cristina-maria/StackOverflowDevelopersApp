@@ -53,9 +53,9 @@ public class DetailUser extends AppCompatActivity {
             if (parentIntent.hasExtra(JSONUtilities.profileImageTag)) {
                 profilePictureString = parentIntent.getStringExtra(JSONUtilities.profileImageTag);
 
-               /* byte [] encodeByte= Base64.decode(profilePictureString,Base64.DEFAULT);
+                byte [] encodeByte= Base64.decode(profilePictureString,Base64.DEFAULT);
                 Bitmap bitmap= BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
-                userProfilePicture.setImageBitmap(bitmap);*/
+                userProfilePicture.setImageBitmap(bitmap);
             }
 
             if (parentIntent.hasExtra(JSONUtilities.locationTag)) {
