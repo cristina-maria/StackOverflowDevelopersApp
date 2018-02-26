@@ -62,6 +62,10 @@ public class MainActivity extends AppCompatActivity implements
 
     private static long cachetime = 1800000;
 
+    private static long ramCacheTime = 600000;
+
+    long lastRamCached;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,63 +88,7 @@ public class MainActivity extends AppCompatActivity implements
 
         int loaderId = LOADER_ID;
 
-        file = new File(this.getFilesDir(), filename);
-
-        long time = System.currentTimeMillis();
-        long lastModified = file.lastModified();
-
-        if (file.exists() && lastModified > time - cachetime ) {
-
-            Log.i("Data", "retrieved from internal storage");
-
-            String data = null;
-            try {
-
-                /*
-                    read from internal storage the data kept in JSON format
-                 */
-                data = NetworkUtilities.readFromInternalStorage(this, filename);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            /*
-                transform the JSON format into a hashMap
-             */
-            dataHashMap = JSONUtilities.
-                    getUsersStringJson(this, data);
-
-            mUsersAdapter.setUsersName(dataHashMap.get(JSONUtilities.nameTag));
-
-            ArrayList<String> profilePictures = dataHashMap.get(JSONUtilities.profileImageTag);
-            for (int i = 0; i < dataHashMap.get(JSONUtilities.nameTag).size(); i++) {
-
-                try {
-                    /*
-                        retrieve the Base64 encoded strings from the internal storage
-                        for the profile picturea
-                     */
-                    data = NetworkUtilities.readFromInternalStorage(this,
-                            "profile_picture" + String.valueOf(i));
-                    profilePictures.set(i, data);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            mUsersAdapter.setUsersProfilePicture(dataHashMap.get(JSONUtilities.profileImageTag));
-
-        } else {
-
-            Log.i("Data", "retrieved from internet");
-
-            LoaderManager.LoaderCallbacks<HashMap<String, ArrayList<String>>> callback = MainActivity.this;
-
-            Bundle bundleForLoader = null;
-
-            getSupportLoaderManager().initLoader(loaderId, bundleForLoader, callback);
-        }
+        retrieveData();
 
     }
 
@@ -235,6 +183,7 @@ public class MainActivity extends AppCompatActivity implements
             dataHashMap = data;
             mUsersAdapter.setUsersName(data.get(JSONUtilities.nameTag));
             mUsersAdapter.setUsersProfilePicture(data.get(JSONUtilities.profileImageTag));
+            lastRamCached = System.currentTimeMillis();
         } else {
 
             // show error
@@ -265,5 +214,88 @@ public class MainActivity extends AppCompatActivity implements
         newIntent.putExtra(JSONUtilities.badgesTag, dataHashMap.get(JSONUtilities.bronzeBadgeTag).get(position));
 
         startActivity(newIntent);
+    }
+
+    /*
+        If the data is expired on ram, it checks the data in the internal storage,
+        and if it is not available either, data is downloaded from the internet
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        Log.i("resume", "yes");
+        long currentTime = System.currentTimeMillis();
+
+        if (lastRamCached > currentTime - ramCacheTime) {
+
+            retrieveData();
+        }
+    }
+
+    /*
+        Method to check if the data available in the interval storage is not expired
+        If it's not, the data received from internet in JSON format is formatted
+        and the profile pictures are also retrieved from the internal storage
+     */
+    public void retrieveData() {
+
+        file = new File(this.getFilesDir(), filename);
+
+        long time = System.currentTimeMillis();
+        long lastModified = file.lastModified();
+
+        if (file.exists() && lastModified > time - cachetime ) {
+
+            Log.i("Data", "retrieved from internal storage");
+
+            String data = null;
+            try {
+
+                /*
+                    read from internal storage the data kept in JSON format
+                 */
+                data = NetworkUtilities.readFromInternalStorage(this, filename);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            /*
+                transform the JSON format into a hashMap
+             */
+            dataHashMap = JSONUtilities.
+                    getUsersStringJson(this, data);
+
+            mUsersAdapter.setUsersName(dataHashMap.get(JSONUtilities.nameTag));
+
+            ArrayList<String> profilePictures = dataHashMap.get(JSONUtilities.profileImageTag);
+            for (int i = 0; i < dataHashMap.get(JSONUtilities.nameTag).size(); i++) {
+
+                try {
+                    /*
+                        retrieve the Base64 encoded strings from the internal storage
+                        for the profile picturea
+                     */
+                    data = NetworkUtilities.readFromInternalStorage(this,
+                            "profile_picture" + String.valueOf(i));
+                    profilePictures.set(i, data);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            mUsersAdapter.setUsersProfilePicture(dataHashMap.get(JSONUtilities.profileImageTag));
+
+        } else { // if data is not available on disk, it is downloaded from the internet
+
+            Log.i("Data", "retrieved from internet");
+
+            LoaderManager.LoaderCallbacks<HashMap<String, ArrayList<String>>> callback = MainActivity.this;
+
+            Bundle bundleForLoader = null;
+
+            getSupportLoaderManager().initLoader(LOADER_ID, bundleForLoader, callback);
+        }
     }
 }
